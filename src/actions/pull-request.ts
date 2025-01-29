@@ -16,6 +16,7 @@ const pullRequestSchema = z.object({
   githubToken: z.string().min(1, "Github token is required"),
   systemMessage: z.string().min(1, "System message is required"),
   userMessage: z.string().min(1, "User message is required"),
+  excludeList: z.string().min(1, "Exclude list is required")
 })
 
 export async function submitPullRequest(prevState: ActionResponse | null, formData: FormData): Promise<ActionResponse> {
@@ -28,7 +29,9 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
       githubToken: formData.get("githubToken") as string,
       systemMessage: formData.get("systemMessage") as string,
       userMessage: formData.get("userMessage") as string,
+      excludeList: formData.get("excludeList") as string
     }
+
     // validate form data
     const validatedData = pullRequestSchema.safeParse(rawData)
 
@@ -47,13 +50,14 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
     const baseSystemPrompt = validatedData.data.systemMessage
     const userPrompt = validatedData.data.userMessage
     const newBranch = validatedData.data.newBranch
+    const excludeList = validatedData.data.excludeList.split("\n").map(e => e.trim()).filter(e => e !== "")
 
     // setup github service
     const github = new GithubService(repoOwner, githubRepo, githubToken)
 
     // retrieve repo codebase
     console.log("Fetching files from repo:", githubRepo)
-    const repoContent = await github.getRepositoryContents("", FILE_EXCLUDE_LIST)
+    const repoContent = await github.getRepositoryContents("", excludeList.length > 0 ? excludeList : FILE_EXCLUDE_LIST)
 
     console.log("\nRepository files sorted by content length:")
     const sortedFiles = repoContent.sort((a, b) => b.content.length - a.content.length)
