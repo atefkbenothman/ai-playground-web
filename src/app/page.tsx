@@ -52,6 +52,7 @@ export default function GitHubPRAutomation() {
                   type="password"
                   className={state?.errors?.githubToken ? "border-red-500" : ""}
                   defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_PAT || ""}
+                  value={state.githubToken || ""}
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
@@ -63,6 +64,7 @@ export default function GitHubPRAutomation() {
                     required
                     minLength={1}
                     defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_OWNER || ""}
+                    value={state.repoOwner || ""}
                   />
                 </div>
                 <div className="space-y-2">
@@ -73,6 +75,7 @@ export default function GitHubPRAutomation() {
                     required
                     minLength={1}
                     defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NAME || ""}
+                    value={state.repoName || ""}
                   />
                 </div>
               </div>
@@ -85,6 +88,7 @@ export default function GitHubPRAutomation() {
                     required
                     minLength={1}
                     defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_BASE_BRANCH || ""}
+                    value={state.baseBranch || ""}
                   />
                 </div>
                 <div className="space-y-2">
@@ -95,6 +99,7 @@ export default function GitHubPRAutomation() {
                     required
                     minLength={1}
                     defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NEW_BRANCH || ""}
+                    value={state.newBranch || ""}
                   />
                 </div>
               </div>
@@ -107,6 +112,7 @@ export default function GitHubPRAutomation() {
                   minLength={1}
                   defaultValue={SYSTEM_MSG}
                   rows={4}
+                  value={state.systemMessage || ""}
                 />
               </div>
               <div className="space-y-2">
@@ -117,6 +123,7 @@ export default function GitHubPRAutomation() {
                   required
                   minLength={1}
                   rows={4}
+                  value={state.userMessage || ""}
                 />
               </div>
               <div className="py-2">
