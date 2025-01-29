@@ -39,7 +39,7 @@ export default function GitHubPRAutomation() {
         <Card className="flex-1 text-xs h-fit">
           <CardHeader className="text-xs">
             <CardTitle>Submission Form</CardTitle>
-            <CardDescription>Enter details for pull request creation</CardDescription>
+            <CardDescription>Enter details for pull request generation</CardDescription>
           </CardHeader>
           <CardContent className="text-xs">
             <form action={action} className="space-y-4">
@@ -100,6 +100,16 @@ export default function GitHubPRAutomation() {
                 </div>
               </div>
               <div className="space-y-2">
+                <Label htmlFor="excludeList">Ignore Files</Label>
+                <Textarea
+                  id="excludeList"
+                  name="excludeList"
+                  minLength={1}
+                  rows={4}
+                  defaultValue={state?.inputs?.excludeList === undefined ? FILE_EXCLUDE_LIST.join("\n") : state?.inputs.excludeList}
+                />
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="systemMessage">System Message</Label>
                 <Textarea
                   id="systemMessage"
@@ -121,20 +131,9 @@ export default function GitHubPRAutomation() {
                   defaultValue={state?.inputs?.userMessage || ""}
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="excludeList">File Exclude List (one pattern per line)</Label>
-                <Textarea
-                  id="excludeList"
-                  name="excludeList"
-                  required
-                  minLength={1}
-                  rows={4}
-                  defaultValue={FILE_EXCLUDE_LIST.join("\n")}
-                />
-              </div>
               <div className="py-2">
                 <Button type="submit" disabled={isPending} className="">
-                  Generate AI response
+                  Generate Pull Request
                 </Button>
               </div>
             </form>

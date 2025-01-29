@@ -16,22 +16,22 @@ const pullRequestSchema = z.object({
   githubToken: z.string().min(1, "Github token is required"),
   systemMessage: z.string().min(1, "System message is required"),
   userMessage: z.string().min(1, "User message is required"),
-  excludeList: z.string().min(1, "Exclude list is required")
+  excludeList: z.string().optional()
 })
 
 export async function submitPullRequest(prevState: ActionResponse | null, formData: FormData): Promise<ActionResponse> {
-  try {
-    const rawData: PRFormData = {
-      repoOwner: formData.get("repoOwner") as string,
-      repoName: formData.get("repoName") as string,
-      baseBranch: formData.get("baseBranch") as string,
-      newBranch: formData.get("newBranch") as string,
-      githubToken: formData.get("githubToken") as string,
-      systemMessage: formData.get("systemMessage") as string,
-      userMessage: formData.get("userMessage") as string,
-      excludeList: formData.get("excludeList") as string
-    }
+  const rawData: PRFormData = {
+    repoOwner: formData.get("repoOwner") as string,
+    repoName: formData.get("repoName") as string,
+    baseBranch: formData.get("baseBranch") as string,
+    newBranch: formData.get("newBranch") as string,
+    githubToken: formData.get("githubToken") as string,
+    systemMessage: formData.get("systemMessage") as string,
+    userMessage: formData.get("userMessage") as string,
+    excludeList: formData.get("excludeList") as string
+  }
 
+  try {
     // validate form data
     const validatedData = pullRequestSchema.safeParse(rawData)
 
@@ -50,14 +50,14 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
     const baseSystemPrompt = validatedData.data.systemMessage
     const userPrompt = validatedData.data.userMessage
     const newBranch = validatedData.data.newBranch
-    const excludeList = validatedData.data.excludeList.split("\n").map(e => e.trim()).filter(e => e !== "")
+    const excludeList = validatedData.data.excludeList ? validatedData.data.excludeList.split("\n").map(e => e.trim()).filter(e => e !== "") : []
 
     // setup github service
     const github = new GithubService(repoOwner, githubRepo, githubToken)
 
     // retrieve repo codebase
     console.log("Fetching files from repo:", githubRepo)
-    const repoContent = await github.getRepositoryContents("", excludeList.length > 0 ? excludeList : FILE_EXCLUDE_LIST)
+    const repoContent = await github.getRepositoryContents("", excludeList)
 
     console.log("\nRepository files sorted by content length:")
     const sortedFiles = repoContent.sort((a, b) => b.content.length - a.content.length)
@@ -108,7 +108,8 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
   } catch (err) {
     return {
       success: false,
-      message: "An unexpected error occurred"
+      message: "An unexpected error occurred",
+      inputs: rawData,
     }
   }
 }
