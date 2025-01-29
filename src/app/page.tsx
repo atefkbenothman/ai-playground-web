@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label"
 import { SYSTEM_MSG } from "@/lib/prompts"
 import { ActionResponse } from "@/types/pull-request"
 import { submitPullRequest } from "@/actions/pull-request"
+import { FILE_EXCLUDE_LIST } from "@/lib/config"
 
 const initialState: ActionResponse = {
   success: false,
@@ -118,6 +119,17 @@ export default function GitHubPRAutomation() {
                   minLength={1}
                   rows={4}
                   defaultValue={state?.inputs?.userMessage || ""}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="excludeList">File Exclude List (one pattern per line)</Label>
+                <Textarea
+                  id="excludeList"
+                  name="excludeList"
+                  required
+                  minLength={1}
+                  rows={4}
+                  defaultValue={FILE_EXCLUDE_LIST.join("\n")}
                 />
               </div>
               <div className="py-2">
