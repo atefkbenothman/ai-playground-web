@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react"
+import { useActionState, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -15,52 +15,22 @@ import {
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { SYSTEM_MSG } from "./prompts"
-import { serverAction } from "next/server-actions"
+import { ActionResponse } from "@/types/pull-request"
+import { submitPullRequest } from "@/actions/pull-request"
+
+const initialState: ActionResponse = {
+  success: false,
+  message: ""
+}
 
 export default function GitHubPRAutomation() {
-  const [formData, setFormData] = useState({
-    repoOwner: process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_OWNER || "",
-    repoName: process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NAME || "",
-    baseBranch: process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_BASE_BRANCH || "",
-    newBranch: process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NEW_BRANCH || "",
-    githubToken: process.env.NEXT_PUBLIC_FORM_GITHUB_PAT || "",
-    systemMessage: SYSTEM_MSG,
-    userMessage: "",
-  })
-  const [aiResponse, setAiResponse] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [state, action, isPending] = useActionState(submitPullRequest, initialState)
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prevData) => ({ ...prevData, [name]: value }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    
-    try {
-      await serverAction("src/app/serverAction.ts", {
-        data: formData
-      })
-    } catch (error) {
-      setError("Failed to submit form. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const handleCreatePR = async () => {
-    setIsLoading(true)
-    alert("Pull request created successfully!")
-    setIsLoading(false)
-  }
+  const [aiResponse, setAiResponse] = useState<string>("")
 
   return (
     <div className="p-2 bg-background text-foreground">
-      <h1 className="text-md font-bold mb-4">GitHub PR Automation</h1>
+      <h1 className="text-xl font-bold mb-4">GitHub PR Automation</h1>
       <div className="flex flex-col lg:flex-row gap-4">
         <Card className="flex-1 text-xs">
           <CardHeader className="text-xs">
@@ -68,19 +38,17 @@ export default function GitHubPRAutomation() {
             <CardDescription>Enter details for PR automation</CardDescription>
           </CardHeader>
           <CardContent className="text-xs">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
-                <div className="text-red-500 text-sm">{error}</div>
-              )}
+            <form action={action} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="githubToken">GitHub Personal Access Token</Label>
                 <Input
                   id="githubToken"
                   name="githubToken"
-                  type="password"
-                  value={formData.githubToken}
-                  onChange={handleInputChange}
                   required
+                  minLength={1}
+                  type="password"
+                  className={state?.errors?.githubToken ? "border-red-500" : ""}
+                  defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_PAT || ""}
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -89,9 +57,9 @@ export default function GitHubPRAutomation() {
                   <Input
                     id="repoOwner"
                     name="repoOwner"
-                    value={formData.repoOwner}
-                    onChange={handleInputChange}
                     required
+                    minLength={1}
+                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_OWNER || ""}
                   />
                 </div>
                 <div className="space-y-2">
@@ -99,9 +67,9 @@ export default function GitHubPRAutomation() {
                   <Input
                     id="repoName"
                     name="repoName"
-                    value={formData.repoName}
-                    onChange={handleInputChange}
                     required
+                    minLength={1}
+                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NAME || ""}
                   />
                 </div>
               </div>
@@ -111,9 +79,9 @@ export default function GitHubPRAutomation() {
                   <Input
                     id="baseBranch"
                     name="baseBranch"
-                    value={formData.baseBranch}
-                    onChange={handleInputChange}
                     required
+                    minLength={1}
+                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_BASE_BRANCH || ""}
                   />
                 </div>
                 <div className="space-y-2">
@@ -121,9 +89,9 @@ export default function GitHubPRAutomation() {
                   <Input
                     id="newBranch"
                     name="newBranch"
-                    value={formData.newBranch}
-                    onChange={handleInputChange}
                     required
+                    minLength={1}
+                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NEW_BRANCH || ""}
                   />
                 </div>
               </div>
@@ -132,9 +100,10 @@ export default function GitHubPRAutomation() {
                 <Textarea
                   id="systemMessage"
                   name="systemMessage"
-                  value={formData.systemMessage}
-                  onChange={handleInputChange}
                   required
+                  minLength={1}
+                  defaultValue={SYSTEM_MSG}
+                  rows={4}
                 />
               </div>
               <div className="space-y-2">
@@ -142,14 +111,14 @@ export default function GitHubPRAutomation() {
                 <Textarea
                   id="userMessage"
                   name="userMessage"
-                  value={formData.userMessage}
-                  onChange={handleInputChange}
                   required
+                  minLength={1}
+                  rows={4}
                 />
               </div>
               <div className="py-2">
-                <Button type="submit" disabled={isLoading} className="">
-                  {isLoading ? "Submitting..." : "Submit Form"}
+                <Button type="submit" disabled={isPending} className="">
+                  Generate AI response
                 </Button>
               </div>
             </form>
@@ -164,12 +133,12 @@ export default function GitHubPRAutomation() {
             {aiResponse ? (
               <pre className="whitespace-pre-wrap bg-muted p-4 rounded">{aiResponse}</pre>
             ) : (
-              <p className="text-muted-foreground italic">AI response will appear here after generation.</p>
+              <p className="text-muted-foreground italic text-xs">AI response will appear here after generation.</p>
             )}
           </CardContent>
           <CardFooter>
-            <Button onClick={handleCreatePR} disabled={isLoading || !aiResponse}>
-              {isLoading ? "Creating PR..." : "Create Pull Request"}
+            <Button type="submit" disabled={isPending || !aiResponse}>
+              {isPending ? "Creating PR..." : "Create Pull Request"}
             </Button>
           </CardFooter>
         </Card>
