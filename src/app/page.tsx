@@ -5,7 +5,14 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter
+} from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 
 export default function GitHubPRAutomation() {
@@ -41,23 +48,33 @@ export default function GitHubPRAutomation() {
     setIsLoading(true)
     // Here you would call your API to create the pull request
     // For now, we'll simulate it with a timeout
-    await new Promise((resolve) => setTimeout(resolve, 2000))
     alert("Pull request created successfully!")
     setIsLoading(false)
   }
 
   return (
-    <div className="container mx-auto p-4 min-h-screen bg-background text-foreground">
-      <h1 className="text-2xl font-bold mb-4">GitHub PR Automation</h1>
-      <div className="flex flex-col lg:flex-row gap-8">
-        <Card className="flex-1">
-          <CardHeader>
+    <div className="p-2 bg-background text-foreground">
+      <h1 className="text-md font-bold mb-4">GitHub PR Automation</h1>
+      <div className="flex flex-col lg:flex-row gap-4">
+        <Card className="flex-1 text-xs">
+          <CardHeader className="text-xs">
             <CardTitle>Input Form</CardTitle>
             <CardDescription>Enter details for PR automation</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="text-xs">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="githubToken">GitHub Personal Access Token</Label>
+                <Input
+                  id="githubToken"
+                  name="githubToken"
+                  type="password"
+                  value={formData.githubToken}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div className="space-y-2">
                   <Label htmlFor="repoOwner">Repository Owner</Label>
                   <Input
@@ -109,25 +126,16 @@ export default function GitHubPRAutomation() {
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="githubToken">GitHub Personal Access Token</Label>
-                <Input
-                  id="githubToken"
-                  name="githubToken"
-                  type="password"
-                  value={formData.githubToken}
-                  onChange={handleInputChange}
-                  required
-                />
+              <div className="py-2">
+                <Button type="submit" disabled={isLoading} className="">
+                  {isLoading ? "Generating..." : "Generate AI Response"}
+                </Button>
               </div>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Generating..." : "Generate AI Response"}
-              </Button>
             </form>
           </CardContent>
         </Card>
 
-        <Card className="flex-1">
+        <Card className="flex-1 h-fit text-xs">
           <CardHeader>
             <CardTitle>AI-Generated Content</CardTitle>
           </CardHeader>
@@ -144,7 +152,7 @@ export default function GitHubPRAutomation() {
             </Button>
           </CardFooter>
         </Card>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }
