@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { SYSTEM_MSG } from "./prompts"
+import { serverAction } from "next/server-actions"
 
 export default function GitHubPRAutomation() {
   const [formData, setFormData] = useState({
@@ -28,6 +29,7 @@ export default function GitHubPRAutomation() {
   })
   const [aiResponse, setAiResponse] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -37,7 +39,17 @@ export default function GitHubPRAutomation() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    setIsLoading(false)
+    setError(null)
+    
+    try {
+      await serverAction("src/app/serverAction.ts", {
+        data: formData
+      })
+    } catch (error) {
+      setError("Failed to submit form. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleCreatePR = async () => {
@@ -57,6 +69,9 @@ export default function GitHubPRAutomation() {
           </CardHeader>
           <CardContent className="text-xs">
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="text-red-500 text-sm">{error}</div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="githubToken">GitHub Personal Access Token</Label>
                 <Input
@@ -134,7 +149,7 @@ export default function GitHubPRAutomation() {
               </div>
               <div className="py-2">
                 <Button type="submit" disabled={isLoading} className="">
-                  {isLoading ? "Generating..." : "Generate AI Response"}
+                  {isLoading ? "Submitting..." : "Submit Form"}
                 </Button>
               </div>
             </form>
@@ -158,7 +173,7 @@ export default function GitHubPRAutomation() {
             </Button>
           </CardFooter>
         </Card>
-      </div >
-    </div >
+      </div>
+    </div>
   )
 }
