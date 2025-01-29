@@ -5,7 +5,7 @@ import { ActionResponse, PRFormData } from "@/types/pull-request"
 import { GithubService } from "@/services/github"
 import { extractModelResponse, formatRepoContents, parseXMLFromResponse } from "@/lib/parser"
 import { generateAIResponse } from "@/services/ai"
-import { FILE_EXLCUDE_LIST } from "@/lib/config"
+import { FILE_EXCLUDE_LIST } from "@/lib/config"
 
 
 const pullRequestSchema = z.object({
@@ -53,7 +53,7 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
 
     // retrieve repo codebase
     console.log("Fetching files from repo:", githubRepo)
-    const repoContent = await github.getRepositoryContents("", FILE_EXLCUDE_LIST)
+    const repoContent = await github.getRepositoryContents("", FILE_EXCLUDE_LIST)
 
     console.log("\nRepository files sorted by content length:")
     const sortedFiles = repoContent.sort((a, b) => b.content.length - a.content.length)

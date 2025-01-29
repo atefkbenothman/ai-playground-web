@@ -1,4 +1,4 @@
-export const FILE_EXLCUDE_LIST = [
+export const FILE_EXCLUDE_LIST = [
   "README.md",
   "LICENSE",
   ".github",
