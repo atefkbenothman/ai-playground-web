@@ -34,11 +34,11 @@ export default function GitHubPRAutomation() {
   return (
     <div className="p-2 bg-background text-foreground">
       <h1 className="text-xl font-bold mb-4">GitHub PR Automation</h1>
-      <div className="flex flex-col lg:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-4">
         <Card className="flex-1 text-xs h-fit">
           <CardHeader className="text-xs">
-            <CardTitle>Input Form</CardTitle>
-            <CardDescription>Enter details for PR automation</CardDescription>
+            <CardTitle>Submission Form</CardTitle>
+            <CardDescription>Enter details for pull request creation</CardDescription>
           </CardHeader>
           <CardContent className="text-xs">
             <form action={action} className="space-y-4">
@@ -54,7 +54,7 @@ export default function GitHubPRAutomation() {
                   defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_PAT || ""}
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
                 <div className="space-y-2">
                   <Label htmlFor="repoOwner">Repository Owner</Label>
                   <Input
@@ -76,7 +76,7 @@ export default function GitHubPRAutomation() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
                 <div className="space-y-2">
                   <Label htmlFor="baseBranch">Base Branch</Label>
                   <Input
@@ -130,7 +130,7 @@ export default function GitHubPRAutomation() {
 
         <Card className="flex-1 h-fit text-xs">
           <CardHeader>
-            <CardTitle>Pull Request Content</CardTitle>
+            <CardTitle>Pull Request</CardTitle>
           </CardHeader>
           <CardContent>
             {state?.success && state.aiResponse?.reasoning ? (
@@ -148,7 +148,9 @@ export default function GitHubPRAutomation() {
               </Tabs>
             ) : isPending ? (
               <p className="text-muted-foreground italic text-xs">Generating pull request...</p>
-            ) : null}
+            ) : (
+              <p className="text-muted-foreground italic text-xs">Pull request content will appear here after generation</p>
+            )}
           </CardContent>
           {state?.success && state.aiResponse?.reasoning ? (
             <CardFooter>
@@ -162,5 +164,3 @@ export default function GitHubPRAutomation() {
     </div>
   )
 }
-{/* <div>
-</div> */}
