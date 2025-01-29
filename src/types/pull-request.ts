@@ -26,6 +26,7 @@ export type PRContent = {
 export interface ActionResponse {
   success: boolean
   message: string
+  inputs?: PRFormData
   errors?: {
     [K in keyof PRFormData]?: string[]
   }

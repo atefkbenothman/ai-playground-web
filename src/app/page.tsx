@@ -51,7 +51,7 @@ export default function GitHubPRAutomation() {
                   minLength={1}
                   type="password"
                   className={state?.errors?.githubToken ? "border-red-500" : ""}
-                  defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_PAT || ""}
+                  defaultValue={state?.inputs?.githubToken || process.env.NEXT_PUBLIC_FORM_GITHUB_PAT || ""}
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
@@ -62,7 +62,7 @@ export default function GitHubPRAutomation() {
                     name="repoOwner"
                     required
                     minLength={1}
-                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_OWNER || ""}
+                    defaultValue={state?.inputs?.repoOwner || process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_OWNER || ""}
                   />
                 </div>
                 <div className="space-y-2">
@@ -72,7 +72,7 @@ export default function GitHubPRAutomation() {
                     name="repoName"
                     required
                     minLength={1}
-                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NAME || ""}
+                    defaultValue={state?.inputs?.repoName || process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NAME || ""}
                   />
                 </div>
               </div>
@@ -84,7 +84,7 @@ export default function GitHubPRAutomation() {
                     name="baseBranch"
                     required
                     minLength={1}
-                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_BASE_BRANCH || ""}
+                    defaultValue={state?.inputs?.baseBranch || process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_BASE_BRANCH || ""}
                   />
                 </div>
                 <div className="space-y-2">
@@ -94,7 +94,7 @@ export default function GitHubPRAutomation() {
                     name="newBranch"
                     required
                     minLength={1}
-                    defaultValue={process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NEW_BRANCH || ""}
+                    defaultValue={state?.inputs?.newBranch || process.env.NEXT_PUBLIC_FORM_GITHUB_REPO_NEW_BRANCH || ""}
                   />
                 </div>
               </div>
@@ -105,7 +105,7 @@ export default function GitHubPRAutomation() {
                   name="systemMessage"
                   required
                   minLength={1}
-                  defaultValue={SYSTEM_MSG}
+                  defaultValue={state?.inputs?.systemMessage || SYSTEM_MSG}
                   rows={4}
                 />
               </div>
@@ -117,6 +117,7 @@ export default function GitHubPRAutomation() {
                   required
                   minLength={1}
                   rows={4}
+                  defaultValue={state?.inputs?.userMessage || ""}
                 />
               </div>
               <div className="py-2">

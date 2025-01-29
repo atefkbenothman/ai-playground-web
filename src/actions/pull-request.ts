@@ -36,6 +36,7 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
       return {
         success: false,
         message: "Please fix the errors in the form",
+        inputs: rawData,
         errors: validatedData.error.flatten().fieldErrors
       }
     }
@@ -64,8 +65,6 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
 
     // format repo codebase into one giant string
     const formattedRepoContents = formatRepoContents(repoContent)
-
-    console.log(formattedRepoContents)
 
     // format system prompt
     const systemPrompt = baseSystemPrompt.replace("{REPO_CONTENT}", formattedRepoContents)
@@ -96,6 +95,7 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
     return {
       success: true,
       message: "PR form saved successfully",
+      inputs: rawData,
       aiResponse: {
         response,
         reasoning
