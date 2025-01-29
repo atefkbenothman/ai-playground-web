@@ -5,7 +5,7 @@ import { ActionResponse, PRFormData } from "@/types/pull-request"
 import { GithubService } from "@/services/github"
 import { extractModelResponse, formatRepoContents, parseXMLFromResponse } from "@/lib/parser"
 import { generateAIResponse } from "@/services/ai"
-import { FILE_EXLCUDE_LIST } from "@/lib/utils"
+import { FILE_EXLCUDE_LIST } from "@/lib/config"
 
 
 const pullRequestSchema = z.object({
