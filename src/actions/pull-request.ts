@@ -2,6 +2,10 @@
 
 import { z } from "zod"
 import { ActionResponse, PRFormData } from "@/types/pull-request"
+import { GithubService } from "@/services/github"
+import { extractModelResponse, formatRepoContents, parseXMLFromResponse } from "@/lib/parser"
+import { generateAIResponse } from "@/services/ai"
+import { FILE_EXLCUDE_LIST } from "@/lib/utils"
 
 
 const pullRequestSchema = z.object({
@@ -36,12 +40,66 @@ export async function submitPullRequest(prevState: ActionResponse | null, formDa
       }
     }
 
-    // save form data somewhere
-    console.log("form data: ", validatedData.data)
+    const githubRepo = validatedData.data.repoName
+    const githubToken = validatedData.data.githubToken
+    const repoOwner = validatedData.data.repoOwner
+    const baseSystemPrompt = validatedData.data.systemMessage
+    const userPrompt = validatedData.data.userMessage
+    const newBranch = validatedData.data.newBranch
+
+    // setup github service
+    const github = new GithubService(repoOwner, githubRepo, githubToken)
+
+    // retrieve repo codebase
+    console.log("Fetching files from repo:", githubRepo)
+    const repoContent = await github.getRepositoryContents("", FILE_EXLCUDE_LIST)
+
+    console.log("\nRepository files sorted by content length:")
+    const sortedFiles = repoContent.sort((a, b) => b.content.length - a.content.length)
+    sortedFiles.forEach(file => {
+      console.log(`- File: ${file.path} (${file.content.length} characters)`)
+    })
+
+    console.log(`Total characters in all files: ${sortedFiles.reduce((acc, file) => acc + file.content.length, 0)}`)
+
+    // format repo codebase into one giant string
+    const formattedRepoContents = formatRepoContents(repoContent)
+
+    console.log(formattedRepoContents)
+
+    // format system prompt
+    const systemPrompt = baseSystemPrompt.replace("{REPO_CONTENT}", formattedRepoContents)
+
+    const { response, reasoning } = await generateAIResponse(systemPrompt, userPrompt)
+
+    // parse xml portion of response
+    // extract pr metadata and updated files content from xml
+    const content = parseXMLFromResponse(response)
+    const { prMetadata, files } = await extractModelResponse(content)
+
+    const defaultBranch = await github.getDefaultBranch()
+
+    // create new branch for PR
+    await github.createBranch(newBranch, defaultBranch)
+
+    // create/update files included in PR
+    await github.updateFiles(newBranch, files)
+
+    // create PR
+    const pr = await github.createPullRequest(prMetadata.title, prMetadata.body, newBranch, defaultBranch)
+
+    // create PR comment with model's reasoning
+    await github.addPullRequestComment(pr.number, `## AI Model's Reasoning Process\n\n${reasoning}\n\n## Generated Files\n${files.map((f) => `- ${f.path}`).join("\n")}`)
+
+    console.log("Pull request successfully created:", pr.html_url)
 
     return {
       success: true,
-      message: "PR form saved successfully"
+      message: "PR form saved successfully",
+      aiResponse: {
+        response,
+        reasoning
+      }
     }
   } catch (err) {
     return {

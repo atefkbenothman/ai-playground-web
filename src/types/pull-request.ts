@@ -8,10 +8,29 @@ export interface PRFormData {
   userMessage: string
 }
 
+export type PRMetadata = {
+  title: string
+  body: string
+}
+
+export type FileContent = {
+  path: string
+  content: string
+}
+
+export type PRContent = {
+  prMetadata: PRMetadata
+  files: FileContent[]
+}
+
 export interface ActionResponse {
   success: boolean
   message: string
   errors?: {
     [K in keyof PRFormData]?: string[]
+  }
+  aiResponse?: {
+    response: string
+    reasoning?: string
   }
 }
