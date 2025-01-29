@@ -6,6 +6,7 @@ export interface PRFormData {
   githubToken: string
   systemMessage: string
   userMessage: string
+  excludeList: string
 }
 
 export type PRMetadata = {
