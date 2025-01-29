@@ -3,5 +3,5 @@ export default function Home() {
     <div>
       <p className="font-semibold text-xl">AI Playground</p>
     </div>
-  );
+  )
 }
