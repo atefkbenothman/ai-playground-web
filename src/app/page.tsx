@@ -185,7 +185,7 @@ export default function GitHubPRAutomation() {
                 />
               </div>
               <div className="py-2">
-                <Button type="submit" disabled={formIsPending}>
+                <Button type="submit" disabled={formIsPending} onClick={() => setPrData({ success: false, message: "", pr: null })}>
                   Generate Pull Request
                 </Button>
               </div>
@@ -193,7 +193,7 @@ export default function GitHubPRAutomation() {
           </CardContent>
         </Card>
 
-        <Card className={cn(`flex-1 h-fit text-xs`, !formState.success ? "invisible" : "visible")}>
+        <Card className={cn(`flex-1 h-fit text-xs`, !formState.success || formIsPending ? "invisible" : "visible")}>
           <CardHeader>
             <CardTitle>Pull Request</CardTitle>
           </CardHeader>
