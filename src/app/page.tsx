@@ -237,7 +237,11 @@ export default function GitHubPRAutomation() {
           </CardContent>
           {formState?.success && formState?.data ? (
             <CardFooter>
-              <Button type="submit" onClick={() => handleSubmitPullRequest(formState)}>
+              <Button 
+                type="submit" 
+                onClick={() => handleSubmitPullRequest(formState)}
+                disabled={prData?.success}
+              >
                 Create Pull Request
               </Button>
             </CardFooter>
