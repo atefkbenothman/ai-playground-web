@@ -14,10 +14,10 @@ import { generateAIResponse } from "@/services/ai"
 import { extractModelResponse, formatRepoContents, parseXMLFromResponse } from "@/lib/parser"
 
 
-export async function getRepoCodebase(repoOwner: string, repoName: string, githubToken: string): Promise<GHRepoCodebaseActionResponse> {
+export async function getRepoCodebase(repoOwner: string, repoName: string, githubToken: string, excludeList: string): Promise<GHRepoCodebaseActionResponse> {
   try {
     const github = new GithubService(repoOwner, repoName, githubToken)
-    const repoContent: FileContent[] = await github.getRepositoryContents("", [])
+    const repoContent: FileContent[] = await github.getRepositoryContents("", excludeList.split("\n").map(e => e.trim()).filter(e => e !== ""))
     return {
       success: true,
       message: "Successfully retrieved repo codebase",
@@ -68,7 +68,7 @@ const pullRequestSchema = z.object({
   githubToken: z.string().min(1, "Github token is required"),
   systemMessage: z.string().min(1, "System message is required"),
   userMessage: z.string().min(1, "User message is required"),
-  excludeList: z.string().optional()
+  excludeList: z.string()
 })
 
 export async function submitForm(prevState: PRFormActionResponse | null, formData: FormData): Promise<PRFormActionResponse> {
@@ -95,7 +95,12 @@ export async function submitForm(prevState: PRFormActionResponse | null, formDat
     }
   }
 
-  const { success: repoSuccess, message: repoMessage, codebase } = await getRepoCodebase(validatedData.data.repoOwner, validatedData.data.repoName, validatedData.data.githubToken)
+  const { success: repoSuccess, message: repoMessage, codebase } = await getRepoCodebase(
+    validatedData.data.repoOwner,
+    validatedData.data.repoName,
+    validatedData.data.githubToken,
+    validatedData.data.excludeList
+  )
 
   if (!repoSuccess) {
     return {
