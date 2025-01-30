@@ -25,7 +25,7 @@ import { CreatePRResponse, PRFormActionResponse } from "@/types/pull-request"
 import { submitForm, submitPullRequest } from "@/actions/pull-request"
 import { useToast } from "@/hooks/use-toast"
 import { cn } from "@/lib/utils"
-
+import { useExpandableContent } from "@/lib/utils"
 
 const initialFormState: PRFormActionResponse = {
   success: false,
@@ -218,14 +218,50 @@ export default function GitHubPRAutomation() {
                   <TabsContent value="files">
                     <div className="space-y-4">
                       {formState.data?.files?.length > 0 ? (
-                        formState.data.files.map((file, index) => (
-                          <div key={index} className="p-2 bg-zinc-800 rounded">
-                            <div className="font-medium mb-2">{file.path}</div>
-                            <div className="text-xs text-zinc-400 overflow-y-auto">
-                              <pre className="whitespace-pre-wrap text-xs">{file.content}</pre>
+                        formState.data.files.map((file, index) => {
+                          const content = file.content
+                          const contentHeight = content.split("\n").length * 20 + 40
+                          const { isExpanded, shouldShowExpand, previewHeight, toggleExpanded } = useExpandableContent(contentHeight)
+
+                          return (
+                            <div 
+                              key={index} 
+                              className="p-2 bg-zinc-800 rounded border border-zinc-700 cursor-pointer transition-all duration-300"
+                              onClick={shouldShowExpand ? toggleExpanded : undefined}
+                            >
+                              <div className="font-medium mb-2 flex justify-between items-center">
+                                <span>{file.path}</span>
+                                {shouldShowExpand && (
+                                  <button 
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      toggleExpanded()
+                                    }}
+                                    className="text-zinc-400 hover:text-zinc-200 transition-colors"
+                                  >
+                                    {isExpanded ? "▼" : "▶"}
+                                  </button>
+                                )}
+                              </div>
+                              <div className="text-xs text-zinc-400 overflow-y-auto">
+                                <pre 
+                                  className="whitespace-pre-wrap text-xs" 
+                                  style={{ 
+                                    maxHeight: `${previewHeight}px`,
+                                    transition: 'max-height 0.3s ease-in-out'
+                                  }}
+                                >
+                                  {content}
+                                </pre>
+                              </div>
+                              {shouldShowExpand && !isExpanded && (
+                                <div className="text-zinc-400 text-xs mt-2">
+                                  Click to expand
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))
+                          )
+                        })
                       ) : (
                         <p className="text-muted-foreground italic">No files included in this pull request</p>
                       )}
