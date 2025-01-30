@@ -237,8 +237,8 @@ export default function GitHubPRAutomation() {
           </CardContent>
           {formState?.success && formState?.data ? (
             <CardFooter>
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 onClick={() => handleSubmitPullRequest(formState)}
                 disabled={prData?.success}
               >
@@ -247,9 +247,15 @@ export default function GitHubPRAutomation() {
             </CardFooter>
           ) : null}
           {prData?.success && prData?.pr ? (
-            <CardFooter className="flex flex-col items-start">
-              <p>Number: {prData?.pr.number}</p>
-              <p>Link: {prData?.pr.html_url}</p>
+            <CardFooter>
+              <a
+                href={prData?.pr.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline text-blue-500 text-sm"
+              >
+                {prData?.pr.html_url}
+              </a>
             </CardFooter>
           ) : null}
         </Card>
