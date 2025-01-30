@@ -207,12 +207,31 @@ export default function GitHubPRAutomation() {
                   <TabsList className="w-full mb-1">
                     <TabsTrigger value="reasoning" className="w-full">Reasoning</TabsTrigger>
                     <TabsTrigger value="response" className="w-full">Response</TabsTrigger>
+                    <TabsTrigger value="files" className="w-full">Files</TabsTrigger>
                   </TabsList>
                   <TabsContent value="reasoning">
                     <pre className="whitespace-pre-wrap bg-zinc-800 p-2 rounded">{formState.data?.reasoning?.trim()}</pre>
                   </TabsContent>
                   <TabsContent value="response">
                     <pre className="whitespace-pre-wrap bg-zinc-800 p-2 rounded">{formState.data?.response?.trim()}</pre>
+                  </TabsContent>
+                  <TabsContent value="files">
+                    <div className="space-y-4">
+                      {formState.data?.files?.length > 0 ? (
+                        formState.data.files.map((file, index) => (
+                          <div key={index} className="p-2 bg-zinc-800 rounded">
+                            <div className="font-medium mb-2">{file.path}</div>
+                            <div className="text-sm text-zinc-400">
+                              {file.content.length > 100 
+                                ? file.content.substring(0, 100) + "..." 
+                                : file.content}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-muted-foreground italic">No files included in this pull request</p>
+                      )}
+                    </div>
                   </TabsContent>
                 </Tabs>
               </div>
