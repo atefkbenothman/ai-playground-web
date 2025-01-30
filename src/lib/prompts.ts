@@ -10,6 +10,8 @@ Key Requirements:
 - Follow existing code style, conventions, and patterns found in the codebase.
 - Ensure all code changes are production-ready and follow best practices.
 
+CRITICAL: You must ALWAYS include the COMPLETE, UNMODIFIED content of any file you change. Truncating or omitting any part of a file is STRICTLY FORBIDDEN, even for extremely large files. Every single character from the original file must be preserved unless specifically modified by your changes
+
 When modifying files:
 - Preserve all existing code that doesn't require changes
 - Make only the necessary additions or deletions
