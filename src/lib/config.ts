@@ -1,9 +1,6 @@
 export const FILE_EXCLUDE_LIST = [
   "README.md",
   "LICENSE",
-  ".github",
-  ".gitignore",
-  ".pre-commit-config.yaml",
   "test",
   "ruff.toml",
   "requirements.txt",
@@ -21,5 +18,8 @@ export const FILE_EXCLUDE_LIST = [
   "next.config.ts",
   "prompts.ts",
   "src/lib/prompts.ts",
-  "tailwind.config.ts"
+  "tailwind.config.ts",
+  ".github",
+  ".gitignore",
+  ".pre-commit-config.yaml",
 ]

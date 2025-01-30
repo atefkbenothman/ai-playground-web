@@ -24,15 +24,41 @@ export type PRContent = {
   files: FileContent[]
 }
 
-export interface ActionResponse {
+export interface PRFormActionResponse {
   success: boolean
   message: string
   inputs?: PRFormData
   errors?: {
     [K in keyof PRFormData]?: string[]
   }
-  aiResponse?: {
+  codebase?: FileContent[]
+  data?: {
     response: string
-    reasoning?: string
+    reasoning: string | undefined
+    prMetadata: PRMetadata
+    files: FileContent[]
   }
+}
+
+export interface GHRepoCodebaseActionResponse {
+  success: boolean
+  message: string
+  codebase: FileContent[]
+}
+
+export interface PRActionResponse {
+  success: boolean
+  message: string
+  data?: {
+    response: string
+    reasoning: string | undefined
+    prMetadata: PRMetadata
+    files: FileContent[]
+  }
+}
+
+export interface CreatePRResponse {
+  success: boolean
+  message: string
+  pr: Record<string, any> | null
 }
