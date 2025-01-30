@@ -221,8 +221,8 @@ export default function GitHubPRAutomation() {
                         formState.data.files.map((file, index) => (
                           <div key={index} className="p-2 bg-zinc-800 rounded">
                             <div className="font-medium mb-2">{file.path}</div>
-                            <div className="text-sm text-zinc-400 overflow-y-auto">
-                              <pre className="whitespace-pre-wrap">{file.content}</pre>
+                            <div className="text-xs text-zinc-400 overflow-y-auto">
+                              <pre className="whitespace-pre-wrap text-xs">{file.content}</pre>
                             </div>
                           </div>
                         ))
