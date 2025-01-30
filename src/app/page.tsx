@@ -25,7 +25,6 @@ import { CreatePRResponse, PRFormActionResponse } from "@/types/pull-request"
 import { submitForm, submitPullRequest } from "@/actions/pull-request"
 import { useToast } from "@/hooks/use-toast"
 
-
 const initialFormState: PRFormActionResponse = {
   success: false,
   message: "",
@@ -81,157 +80,153 @@ export default function GitHubPRAutomation() {
   return (
     <div className="p-2 bg-background text-foreground">
       <h1 className="text-xl font-bold mb-4">GitHub PR Automation</h1>
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-4">
-        <Card className="flex-1 text-xs h-fit">
-          <CardHeader className="text-xs">
-            <CardTitle>Submission Form</CardTitle>
-            <CardDescription>Enter details for pull request generation</CardDescription>
-          </CardHeader>
-          <CardContent className="text-xs">
-            <form action={formAction} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="githubToken">GitHub Personal Access Token</Label>
-                <Input
-                  id="githubToken"
-                  name="githubToken"
-                  required
-                  minLength={1}
-                  type="password"
-                  className={formState?.errors?.githubToken ? "border-red-500" : ""}
-                  defaultValue={formState?.inputs?.githubToken || initialFormState.inputs?.githubToken || ""}
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-2 gap-6">
+        <div className="lg:col-span-1">
+          <Card className="h-fit">
+            <CardHeader className="text-xs">
+              <CardTitle>Submission Form</CardTitle>
+              <CardDescription>Enter details for pull request generation</CardDescription>
+            </CardHeader>
+            <CardContent className="text-xs">
+              <form action={formAction} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="repoOwner">Repository Owner</Label>
+                  <Label htmlFor="githubToken">GitHub Personal Access Token</Label>
                   <Input
-                    id="repoOwner"
-                    name="repoOwner"
+                    id="githubToken"
+                    name="githubToken"
                     required
                     minLength={1}
-                    className={formState?.errors?.repoOwner ? "border-red-500" : ""}
-                    defaultValue={formState?.inputs?.repoOwner || initialFormState.inputs?.repoOwner || ""}
+                    type="password"
+                    className={formState?.errors?.githubToken ? "border-red-500" : ""}
+                    defaultValue={formState?.inputs?.githubToken || initialFormState.inputs?.githubToken || ""}
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+                  <div className="space-y-2">
+                    <Label htmlFor="repoOwner">Repository Owner</Label>
+                    <Input
+                      id="repoOwner"
+                      name="repoOwner"
+                      required
+                      minLength={1}
+                      className={formState?.errors?.repoOwner ? "border-red-500" : ""}
+                      defaultValue={formState?.inputs?.repoOwner || initialFormState.inputs?.repoOwner || ""}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="repoName">Repository Name</Label>
+                    <Input
+                      id="repoName"
+                      name="repoName"
+                      required
+                      minLength={1}
+                      className={formState?.errors?.repoName ? "border-red-500" : ""}
+                      defaultValue={formState?.inputs?.repoName || initialFormState.inputs?.repoName || ""}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
+                  <div className="space-y-2">
+                    <Label htmlFor="baseBranch">Base Branch</Label>
+                    <Input
+                      id="baseBranch"
+                      name="baseBranch"
+                      required
+                      minLength={1}
+                      className={formState?.errors?.baseBranch ? "border-red-500" : ""}
+                      defaultValue={formState?.inputs?.baseBranch || initialFormState.inputs?.baseBranch || ""}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newBranch">New Branch</Label>
+                    <Input
+                      id="newBranch"
+                      name="newBranch"
+                      required
+                      minLength={1}
+                      className={formState?.errors?.newBranch ? "border-red-500" : ""}
+                      defaultValue={formState?.inputs?.newBranch || initialFormState.inputs?.newBranch || ""}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="excludeList">Ignore Files</Label>
+                  <Textarea
+                    id="excludeList"
+                    name="excludeList"
+                    minLength={1}
+                    rows={4}
+                    defaultValue={formState?.inputs?.excludeList === undefined ? initialFormState.inputs?.excludeList : formState?.inputs.excludeList}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="repoName">Repository Name</Label>
-                  <Input
-                    id="repoName"
-                    name="repoName"
+                  <Label htmlFor="systemMessage">System Message</Label>
+                  <Textarea
+                    id="systemMessage"
+                    name="systemMessage"
                     required
                     minLength={1}
-                    className={formState?.errors?.repoName ? "border-red-500" : ""}
-                    defaultValue={formState?.inputs?.repoName || initialFormState.inputs?.repoName || ""}
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
-                <div className="space-y-2">
-                  <Label htmlFor="baseBranch">Base Branch</Label>
-                  <Input
-                    id="baseBranch"
-                    name="baseBranch"
-                    required
-                    minLength={1}
-                    className={formState?.errors?.baseBranch ? "border-red-500" : ""}
-                    defaultValue={formState?.inputs?.baseBranch || initialFormState.inputs?.baseBranch || ""}
+                    className={formState?.errors?.systemMessage ? "border-red-500" : ""}
+                    defaultValue={formState?.inputs?.systemMessage || initialFormState.inputs?.systemMessage || ""}
+                    rows={4}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="newBranch">New Branch</Label>
-                  <Input
-                    id="newBranch"
-                    name="newBranch"
+                  <Label htmlFor="userMessage">User Message</Label>
+                  <Textarea
+                    id="userMessage"
+                    name="userMessage"
                     required
                     minLength={1}
-                    className={formState?.errors?.newBranch ? "border-red-500" : ""}
-                    defaultValue={formState?.inputs?.newBranch || initialFormState.inputs?.newBranch || ""}
+                    rows={4}
+                    className={formState?.errors?.userMessage ? "border-red-500" : ""}
+                    defaultValue={formState?.inputs?.userMessage || initialFormState.inputs?.userMessage || ""}
                   />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="excludeList">Ignore Files</Label>
-                <Textarea
-                  id="excludeList"
-                  name="excludeList"
-                  minLength={1}
-                  rows={4}
-                  defaultValue={formState?.inputs?.excludeList === undefined ? initialFormState.inputs?.excludeList : formState?.inputs.excludeList}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="systemMessage">System Message</Label>
-                <Textarea
-                  id="systemMessage"
-                  name="systemMessage"
-                  required
-                  minLength={1}
-                  className={formState?.errors?.systemMessage ? "border-red-500" : ""}
-                  defaultValue={formState?.inputs?.systemMessage || initialFormState.inputs?.systemMessage || ""}
-                  rows={4}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="userMessage">User Message</Label>
-                <Textarea
-                  id="userMessage"
-                  name="userMessage"
-                  required
-                  minLength={1}
-                  rows={4}
-                  className={formState?.errors?.userMessage ? "border-red-500" : ""}
-                  defaultValue={formState?.inputs?.userMessage || initialFormState.inputs?.userMessage || ""}
-                />
-              </div>
-              <div className="py-2">
-                <Button type="submit" disabled={formIsPending}>
-                  Generate Pull Request
+                <div className="py-2">
+                  <Button type="submit" disabled={formIsPending}>
+                    Generate Pull Request
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="lg:col-span-1">
+          {formState?.success && (
+            <Card className="h-fit">
+              <CardHeader>
+                <CardTitle>Pull Request</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {formIsPending ? (
+                  <p className="text-muted-foreground italic text-xs">Generating pull request...</p>
+                ) : null}
+                {formState?.success && formState?.data ? (
+                  <div>
+                    <Tabs defaultValue="reasoning" className="">
+                      <TabsList className="w-full mb-1">
+                        <TabsTrigger value="reasoning" className="w-full">Reasoning</TabsTrigger>
+                        <TabsTrigger value="response" className="w-full">Response</TabsTrigger>
+                      </TabsList>
+                      <TabsContent value="reasoning">
+                        <pre className="whitespace-pre-wrap bg-zinc-800 p-2 rounded">{formState.data?.reasoning?.trim()}</pre>
+                      </TabsContent>
+                      <TabsContent value="response">
+                        <pre className="whitespace-pre-wrap bg-zinc-800 p-2 rounded">{formState.data?.response?.trim()}</pre>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
+                ) : null}
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" onClick={() => handleSubmitPullRequest(formState)}>
+                  Create Pull Request
                 </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-
-        <Card className="flex-1 h-fit text-xs">
-          <CardHeader>
-            <CardTitle>Pull Request</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {formIsPending ? (
-              <p className="text-muted-foreground italic text-xs">Generating pull request...</p>
-            ) : null}
-            {formState?.success && formState?.data ? (
-              <div>
-                <Tabs defaultValue="reasoning" className="">
-                  <TabsList className="w-full mb-1">
-                    <TabsTrigger value="reasoning" className="w-full">Reasoning</TabsTrigger>
-                    <TabsTrigger value="response" className="w-full">Response</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="reasoning">
-                    <pre className="whitespace-pre-wrap bg-zinc-800 p-2 rounded">{formState.data?.reasoning?.trim()}</pre>
-                  </TabsContent>
-                  <TabsContent value="response">
-                    <pre className="whitespace-pre-wrap bg-zinc-800 p-2 rounded">{formState.data?.response?.trim()}</pre>
-                  </TabsContent>
-                </Tabs>
-              </div>
-            ) : null}
-          </CardContent>
-          {formState?.success && formState?.data ? (
-            <CardFooter>
-              <Button type="submit" onClick={() => handleSubmitPullRequest(formState)}>
-                Create Pull Request
-              </Button>
-            </CardFooter>
-          ) : null}
-          {prData?.success && prData?.pr ? (
-            <CardFooter className="flex flex-col items-start">
-              <p>Number: {prData?.pr.number}</p>
-              <p>Link: {prData?.pr.html_url}</p>
-            </CardFooter>
-          ) : null}
-        </Card>
-
+              </CardFooter>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   )
