@@ -24,6 +24,7 @@ import { FILE_EXCLUDE_LIST } from "@/lib/config"
 import { CreatePRResponse, PRFormActionResponse } from "@/types/pull-request"
 import { submitForm, submitPullRequest } from "@/actions/pull-request"
 import { useToast } from "@/hooks/use-toast"
+import { cn } from "@/lib/utils"
 
 
 const initialFormState: PRFormActionResponse = {
@@ -192,7 +193,7 @@ export default function GitHubPRAutomation() {
           </CardContent>
         </Card>
 
-        <Card className="flex-1 h-fit text-xs">
+        <Card className={cn(`flex-1 h-fit text-xs`, !formState.success ? "invisible" : "visible")}>
           <CardHeader>
             <CardTitle>Pull Request</CardTitle>
           </CardHeader>
